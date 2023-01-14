@@ -1,0 +1,101 @@
+#include <Wire.h>
+#include <SPI.h>
+#include <Servo.h>
+ 
+// библиотека для работы с RFID/NFC
+#include <Adafruit_PN532.h>
+ 
+// пин прерывания
+#define PN532_IRQ   9
+ 
+// создаём объект для работы со сканером и передаём ему два параметра
+// первый — номер пина прерывания
+// вторым — число 100
+// от Adafruit был программный сброс шилда
+// в cканере RFID/NFC 13,56 МГц (Troyka-модуль) этот пин не используется
+// поэтому передаём цифру, большая чем любой пин Arduino
+Adafruit_PN532 nfc(PN532_IRQ, 100);
+
+
+Servo servo1;
+
+
+// Массивы в которые необходимо записать ID карт:
+uint8_t uidFirstCard[] = {0x04, 0xDC, 0xE8, 0x2D, 0x10, 0x02, 0x89};
+uint8_t uidSecondCard[] = {0x04, 0x9E, 0xEC, 0x2D, 0x10, 0x02, 0x89};
+uint8_t uidThirdCard[] = {0x04, 0x71, 0xC1, 0xDA, 0xA3, 0x40, 0x81};
+
+ 
+// функция которая сравнивает два переданных ID
+// при совпадении возвращает значение true
+// и значение false если ID разные
+boolean comparisonOfUid(uint8_t uidRead[8], uint8_t uidComp[8], uint8_t uidLen) {
+  for (uint8_t i = 0; i < uidLen; i++) {
+    if (uidRead[i] != uidComp[i]) {
+      return false;
+    }
+    if (i == (uidLen)-0x01) {
+      return true;
+    }
+  }
+}
+ 
+void setup(void) {
+
+  // инициализация Serial - порта
+  Serial.begin(9600);
+  // инициализация RFID/NFC сканера
+  nfc.begin();
+  int versiondata = nfc.getFirmwareVersion();
+  if (!versiondata) {
+    while (1) {
+      Serial.print("Didn't find RFID/NFC reader");
+      delay(1000);
+    }
+  }
+  Serial.println("Found RFID/NFC reader");
+  // настраиваем модуль
+  nfc.SAMConfig();
+  Serial.println("Waiting for a card ...");
+
+  servo1.attach(11);
+}
+ 
+void loop(void) {
+  servo1.write(120);
+  //поворот сервы на 90 градусов (закрытие)
+  uint8_t success;
+  // буфер для хранения ID карты
+  uint8_t uid[8];
+  // размер буфера карты
+  uint8_t uidLength;
+  // слушаем новые метки
+  success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
+  // если найдена карта
+  if (success) {
+    // Поворачиваем серву1 если функция сравнения
+    // ID вернёт true иначе оставляем всё как есть
+    if (comparisonOfUid(uid, uidFirstCard, uidLength)) {
+     servo1.write(30);
+      Serial.println("FirstTAG");
+    } else {
+      // Поворачиваем серву2 если функция сравнения
+      // ID вернёт true иначе оставляем всё как есть
+      if (comparisonOfUid(uid, uidSecondCard, uidLength)) {
+       ;
+        Serial.println("SecondTAG");
+      } else {
+        // Поворачиваем серву3 если функция сравнения
+        // ID вернёт true иначе оставляем всё как есть
+        if (comparisonOfUid(uid, uidThirdCard, uidLength)) {
+          ;
+          Serial.println("ThirdTAG");
+        } else {
+          //если нет совпадения
+          Serial.println("NoTAG");
+        }
+      }
+    }
+  delay(5000);
+  }
+}
