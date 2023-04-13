@@ -68,10 +68,10 @@ void setup() {
   servo4.attach(13);
 
   //поворот сервы на 90 градусов (закрытие)
-  servo1.write(120);
-  servo2.write(120);
-  servo3.write(120);
-  servo4.write(120);
+  servo1.write(90);
+  servo2.write(90);
+  servo3.write(90);
+  servo4.write(90);
 
 
   avaliable1 = true;
@@ -103,7 +103,7 @@ void loop() {
      unlocking = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
      if (comparisonOfUid(uid, uidFirstCard, uidLength)) {
          //поворачиваем серву1 для закртытия
-         servo1.write(120);
+         servo1.write(90);
          avaliable1 = true;
          uint8_t uidFirstCard[] = { 0, 0, 0, 0 };
          Serial.println("Avaliable 1");
@@ -119,7 +119,7 @@ void loop() {
         unlocking = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
         if (comparisonOfUid(uid, uidSecondCard, uidLength)) {
             //поворачиваем серву2 для закрытия
-            servo2.write(120);
+            servo2.write(90);
             avaliable2 = true;
             uint8_t uidSecondCard[] = { 0, 0, 0, 0 };
             Serial.println("Avaliable 2");
@@ -135,7 +135,7 @@ void loop() {
           unlocking = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
           if (comparisonOfUid(uid, uidThirdCard, uidLength)) {
               //поворачиваем серву3 для закрытия
-              servo3.write(120);
+              servo3.write(90);
               avaliable3 = true;
               uint8_t uidThirdCard[] = { 0, 0, 0, 0 };
               Serial.println("Avaliable 3");
@@ -151,7 +151,7 @@ void loop() {
            unlocking = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
              if (comparisonOfUid(uid, uidFourthCard, uidLength)) {
               //поворачиваем серву3 для закрытия
-              servo4.write(120);
+              servo4.write(90);
               avaliable4 = true;
               uint8_t uidFourthCard[] = { 0, 0, 0, 0};
               Serial.println("Avaliable 4");
@@ -173,7 +173,7 @@ void loop() {
              // если сравнение первой карточки со второй совпадет, то он закроет серву и запишет ID в буфер
              if (comparisonOfUid(uid1, uid, uidLength)) {
                  //поворачиваем серву1 для закрытия
-                 servo1.write(120);
+                 servo1.write(90);
                  Serial.println("Lock 1");
                  uint8_t lockingbuf;
                  // костыль для записи в буфер
@@ -196,7 +196,7 @@ void loop() {
                 // если сравнение первой карточки со второй совпадет, то он закроет серву и запишет ID в буфер
                 if (comparisonOfUid(uid1, uid, uidLength)) {
                     //поворот сервы2 для закрытия
-                    servo2.write(120);
+                    servo2.write(90);
                     Serial.println("Lock 2");
                     uint8_t lockingbuf;
                     // костыль для записи в буфер
@@ -219,7 +219,7 @@ void loop() {
                   // если сравнение первой карточки со второй совпадет, то он закроет серву и запишет ID в буфер                  
                   if (comparisonOfUid(uid1, uid, uidLength)) {
                       //поворачиваем серву3 для закрытия
-                      servo3.write(120);
+                      servo3.write(90);
                       Serial.println("Lock 3");
                       uint8_t lockingbuf;
                       // костыль для записи в буфер
@@ -242,7 +242,7 @@ void loop() {
                     // если сравнение первой карточки со второй совпадет, то он закроет серву и запишет ID в буфер
                     if (comparisonOfUid(uid1, uid, uidLength)) {
                         //поворачивает серву4 для закрытия
-                        servo4.write(120);
+                        servo4.write(90);
                         Serial.println("Lock 4");
                         uint8_t lockingbuf;
                         // костыль для записи в буфер
